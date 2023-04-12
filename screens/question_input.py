@@ -1,4 +1,4 @@
-from kivy.uix.screenmanager import Screen
+from kivy.uix.screenmanager import Screen, WipeTransition
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
@@ -39,7 +39,7 @@ class QuestionInput(Screen):
         self.continue_btn = Button(
             text='Proceed',
             bold=True,
-            on_release=self.go_to_table,
+            on_release=lambda instance:self.go_without_transition('table'),
             size_hint=(0.6, 0.2),
             pos_hint = {'center_x': 0.5, 'center_y': 0.4},
             background_normal='',
@@ -49,7 +49,7 @@ class QuestionInput(Screen):
         self.homepage_btn = Button(
             text='Back to homepage',
             bold=True,
-            on_release=self.go_to_homepage,
+            on_release=lambda instance:self.go_to_page('home', 'right'),
             size_hint=(0.4, 0.1),
             pos_hint = {'center_x': 0.5, 'center_y': 0.2},
             background_normal='',
@@ -63,12 +63,11 @@ class QuestionInput(Screen):
         self.add_widget(self.layout)
         self.add_widget(Toolbar('right', 'right', 'left'))
 
-    def go_to_table(self, *args):
-        self.parent.transition.direction = 'left'
-        self.parent.transition.duration = TRANSITION_TIME
-        self.parent.current = 'table'
+    def go_to_page(self, page, direction, *args):
+        self.parent.transition.direction = direction
+        self.parent.transition.duration = 0
+        self.parent.current = page
 
-    def go_to_homepage(self, *args  ):
-        self.parent.transition.direction = 'right'
-        self.parent.transition.duration = TRANSITION_TIME
-        self.parent.current = 'home'
+    def go_without_transition(self, page, *args):
+        self.parent.transition = WipeTransition()
+        self.parent.current = page
