@@ -18,12 +18,15 @@ class TarotApp(App):
 	def build(self):
 
 		sm = ScreenManager()
-		sm.add_widget(HomePage(name='home'))
 		sm.add_widget(QuestionInput(name='question'))
 		sm.add_widget(Table(name='table'))
 		sm.add_widget(DailyReading(name='daily'))
 		sm.add_widget(PickQuote(name='pickquote'))
 		sm.add_widget(DailyQuote(name='dailyquote'))
+		sm.add_widget(HomePage(name='home'))
+
+		
+		sm.current = 'home'
 		return sm
 
 

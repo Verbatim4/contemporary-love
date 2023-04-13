@@ -93,6 +93,9 @@ class PickQuote(Screen):
 		self.layout.add_widget(self.back_btn)
 		self.add_widget(self.layout)
 
+	def on_pre_enter(self, *args):
+		pass
+
 	def set_picked(self, genre, *args):
 		self.genre = genre
 
@@ -129,37 +132,35 @@ class DailyQuote(Screen):
 		self.add_widget(self.back_btn)
 
 	def on_pre_enter(self, *args):
-		pick_quote = self.manager.get_screen('pickquote')
-		self.genre = pick_quote.genre
-		self.quotes = pd.read_csv('./assets/quotes4.csv', sep=',')
-
-		self.available_quotes = self.quotes.loc[self.quotes['GENRE'] == self.genre]
-		self.picked_quote = self.available_quotes.sample(1)
-		# print(self.picked_quote)
-
-		wrap = TextWrapper(width=40)
-		self.quote = wrap.fill(text=f"{''.join(self.picked_quote['QUOTE'].values)}")
-		self.author = wrap.fill(text=f"{''.join(self.picked_quote['AUTHOR'].values)}")
-
-		self.quote_label.text = self.quote
-		self.author_label.text = self.author
-
 		today = str(datetime.date.today())
+		pick_quote = self.manager.get_screen('pickquote')
 
 		with open('./assets/today.txt', 'r+') as f:
 			content = f.readlines()
 			old_date = content[0]
-			old_quote = content[3].strip().split(':')[0]
-			old_author = content[3].strip().split(':')[1]
 
-			if today == old_date.strip():
-				self.quote_label.text = old_quote
-				self.author_label.text = old_author
+			if today != old_date.strip():
+				self.available_quotes = self.quotes.loc[self.quotes['GENRE'] == pick_quote.genre]
+				self.picked_quote = self.available_quotes.sample(1)
+				# print(self.picked_quote)
 
-				homepage = self.manager.get_screen('home')
-				homepage.daily_quote.on_release = lambda:homepage.go_to_page('dailyquote', 'left')
+				raw_quote = ''.join(self.picked_quote['QUOTE'].values)
+				raw_author = ''.join(self.picked_quote['AUTHOR'].values)
 
-				print(self.manager)
+				wrap = TextWrapper(width=40)
+				new_quote = wrap.fill(text=f"{raw_quote}")
+				new_author = wrap.fill(text=f"{raw_author}")
+
+				self.set_quote(new_quote, new_author)
+
+				content[0] = today + '\n'
+				content[3] = raw_quote + ';' + raw_author + '\n'
+				f.seek(0)
+				f.write(''.join(content))
+
+	def set_quote(self, quote, author, *args):
+		self.quote_label.text = quote
+		self.author_label.text = author
 
 	def clear_page(self, *args):
 		self.quote_label.text = ''
@@ -173,3 +174,4 @@ class DailyQuote(Screen):
 
 	def test(self, *args):
 		print('cum')
+

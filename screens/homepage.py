@@ -4,8 +4,9 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 
 import datetime
-
+from textwrap import TextWrapper
 from tools.toolbar import Toolbar
+import pandas as pd
 
 TRANSITION_TIME = 0.2
 BUTTON_COLOR = (0.2, 0.2, 0.2, 1)
@@ -65,8 +66,23 @@ class HomePage(Screen):
 		self.add_widget(self.layout)
 		self.add_widget(self.toolbar)
 
-	def on_pre_enter(self, *args):
-		pass
+	def on_enter(self, *args):
+		daily_quote = self.manager.get_screen('dailyquote')
+		daily_quote.quotes = pd.read_csv('./assets/quotes4.csv', sep=',')
+		today = str(datetime.date.today())
+
+		with open('./assets/today.txt', 'r+') as f:
+			content = f.readlines()
+			old_date = content[0]
+			old_quote = content[3].strip().split(';')[0]
+			old_author = content[3].strip().split(';')[1]
+
+			if today == old_date.strip():
+				wrap = TextWrapper(width=40)
+				daily_quote.set_quote(wrap.fill(text=old_quote), wrap.fill(text=old_author))
+
+				homepage = self.manager.get_screen('home')
+				homepage.daily_quote.on_release = lambda:homepage.go_to_page('dailyquote', 'left')
 
 	def go_to_page(self, page, direction, *args):
 		self.parent.transition.direction = direction
