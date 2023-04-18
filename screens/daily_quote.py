@@ -92,6 +92,7 @@ class PickQuote(Screen):
 		self.layout.add_widget(self.button_layout)
 		self.layout.add_widget(self.back_btn)
 		self.add_widget(self.layout)
+		self.add_widget(Toolbar('right', 'right', 'right'))
 
 	def on_pre_enter(self, *args):
 		pass
@@ -130,6 +131,7 @@ class DailyQuote(Screen):
 		self.add_widget(self.quote_label)
 		self.add_widget(self.author_label)
 		self.add_widget(self.back_btn)
+		self.add_widget(Toolbar('right', 'right', 'right'))
 
 	def on_pre_enter(self, *args):
 		today = str(datetime.date.today())
