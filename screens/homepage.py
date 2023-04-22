@@ -74,10 +74,19 @@ class HomePage(Screen):
 		with open('./assets/today.txt', 'r+') as f:
 			content = f.readlines()
 			old_date = content[0]
-			old_quote = content[3].strip().split(';')[0]
-			old_author = content[3].strip().split(';')[1]
+			old_quote = content[4].strip().split(';')[0]
+			old_author = content[4].strip().split(';')[1]
+			did_quote = int(content[5].strip().split(':')[1])
 
-			if today == old_date.strip():
+			if today != old_date.strip():
+				content[0] = today + '\n'
+				content[3] = 'daily_card:0\n'
+				content[5] = 'daily_quote:0\n'
+				f.seek(0)
+				f.writelines(content)
+
+			if (today == old_date.strip()) and (did_quote == 1):
+				# print(did_quote)
 				wrap = TextWrapper(width=40)
 				daily_quote.set_quote(wrap.fill(text=old_quote), wrap.fill(text=old_author))
 

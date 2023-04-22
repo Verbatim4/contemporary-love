@@ -47,8 +47,9 @@ class DailyReading(Screen):
 			old_date = content[0]
 			old_card = content[1].split(':')
 			old_color = eval(content[2])
+			did_card = int(content[3].strip().split(':')[1])
 
-			if today == old_date.strip():
+			if (today == old_date.strip()) and (did_card):
 				self.daily_card.card_val = tuple(old_card)
 				self.daily_card.set_text(old_card[0])
 				self.daily_card.background_color = tuple(old_color)

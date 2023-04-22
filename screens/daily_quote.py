@@ -15,9 +15,6 @@ import random
 BUTTON_COLOR = [0.2, 0.2, 0.2, 1]
 PICKED_GENRE = ''
 
-#TODO: open today.txt and get genre, then make self.genre variable in pickquote to access in dailyquote
-
-
 class PickQuote(Screen):
 	def __init__(self, **kwargs):
 		super(PickQuote, self).__init__(**kwargs)
@@ -138,16 +135,22 @@ class DailyQuote(Screen):
 		pick_quote = self.manager.get_screen('pickquote')
 
 		with open('./assets/today.txt', 'r+') as f:
+			f.seek(0)
 			content = f.readlines()
 			old_date = content[0]
+			did_quote = int(content[5].strip().split(':')[1])
+			# print(did_quote)
 
-			if today != old_date.strip():
+			if ((today != old_date.strip()) or (did_quote == 0)):
+				self.test()
 				self.available_quotes = self.quotes.loc[self.quotes['GENRE'] == pick_quote.genre]
 				self.picked_quote = self.available_quotes.sample(1)
 				# print(self.picked_quote)
 
 				raw_quote = ''.join(self.picked_quote['QUOTE'].values)
 				raw_author = ''.join(self.picked_quote['AUTHOR'].values)
+
+				print(raw_quote, raw_author)
 
 				wrap = TextWrapper(width=40)
 				new_quote = wrap.fill(text=f"{raw_quote}")
@@ -156,9 +159,12 @@ class DailyQuote(Screen):
 				self.set_quote(new_quote, new_author)
 
 				content[0] = today + '\n'
-				content[3] = raw_quote + ';' + raw_author + '\n'
+				content[4] = raw_quote + ';' + raw_author + '\n'
+				content[5] = 'daily_quote:1\n'
 				f.seek(0)
-				f.write(''.join(content))
+				f.writelines(content)
+				f.truncate()
+				# print(content)
 
 	def set_quote(self, quote, author, *args):
 		self.quote_label.text = quote

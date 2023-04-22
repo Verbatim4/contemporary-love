@@ -1,10 +1,9 @@
 from kivy.app import App
-from kivy.uix.screenmanager import ScreenManager
+from kivy.uix.screenmanager import ScreenManager, NoTransition, SlideTransition
 from kivy.core.window import Window
 
 from screens.homepage import *
 from screens.table import *
-# from screens.question_input import *
 from screens.daily_reading import *
 from screens.daily_quote import *
 
@@ -25,8 +24,9 @@ class TarotApp(App):
 		sm.add_widget(DailyQuote(name='dailyquote'))
 		sm.add_widget(HomePage(name='home'))
 
-		
+		sm.transition = NoTransition()
 		sm.current = 'home'
+		sm.transition = SlideTransition(direction='left')
 		return sm
 
 

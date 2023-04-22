@@ -73,17 +73,19 @@ class Card(Button):
 				self.set_text(self.card_val[0])
 
 				if self.parent.parent.parent.parent.current == 'daily':
-					with open('./assets/today.txt', 'r') as f:
+					with open('./assets/today.txt', 'r+') as f:
 						f.seek(0)
 						data = f.readlines()
 					
-					with open('./assets/today.txt', 'w') as f:
 						f.seek(0)
 						today = str(datetime.date.today())
 						data[0] = today + '\n'
 						data[1] = ":".join(self.card_val) + '\n'
 						data[2] = str(self.background_color) + '\n'
+						data[3] = 'daily_card:1\n'
+
 						f.writelines(data)
+						f.truncate()
 
 				return 
 
